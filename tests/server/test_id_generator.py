@@ -39,7 +39,7 @@ class TestIDGeneratorContext:
         from pydantic import ValidationError  # pylint: disable=C0415
 
         with pytest.raises(ValidationError):
-            IDGeneratorContext(task_id={"not": "a string"}) # noqa
+            IDGeneratorContext(task_id={"not": "a string"})  # noqa
 
 
 class TestIDGenerator:
@@ -48,22 +48,24 @@ class TestIDGenerator:
     def test_cannot_instantiate_abstract_class(self):
         """Test that IDGenerator cannot be instantiated directly."""
         with pytest.raises(TypeError):
-            IDGenerator() # noqa pylint: disable=E0110
+            IDGenerator()  # noqa pylint: disable=E0110
 
     def test_subclass_must_implement_generate(self):
         """Test that subclasses must implement the generate method."""
 
-        class IncompleteGenerator(IDGenerator): # noqa pylint: disable=C0115,R0903
+        class IncompleteGenerator(IDGenerator):  # noqa pylint: disable=C0115,R0903
             pass
 
         with pytest.raises(TypeError):
-            IncompleteGenerator() # noqa pylint: disable=E0110
+            IncompleteGenerator()  # noqa pylint: disable=E0110
 
     def test_valid_subclass_implementation(self):
         """Test that a valid subclass can be instantiated."""
-        class ValidGenerator(IDGenerator): # pylint: disable=C0115,R0903
+
+        class ValidGenerator(IDGenerator):  # pylint: disable=C0115,R0903
             def generate(self, context: IDGeneratorContext) -> str:
                 return "test_id"
+
         generator = ValidGenerator()
         assert generator.generate(IDGeneratorContext()) == "test_id"
 
