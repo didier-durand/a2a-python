@@ -83,7 +83,6 @@ class TestUUIDGenerator:
         context = IDGeneratorContext()
         result = generator.generate(context)
         
-        # This should not raise an exception if result is a valid UUID
         uuid.UUID(result)
 
     def test_generate_returns_uuid_version_4(self):
