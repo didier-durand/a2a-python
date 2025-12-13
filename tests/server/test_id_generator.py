@@ -1,4 +1,5 @@
 """Tests for IDGenerator abstract base class."""
+
 import uuid
 
 from unittest.mock import patch
@@ -19,7 +20,9 @@ class TestIDGeneratorContext:
 
     def test_context_creation_with_all_fields(self):
         """Test creating context with all fields populated."""
-        context = IDGeneratorContext(task_id='task_123', context_id='context_456')
+        context = IDGeneratorContext(
+            task_id='task_123', context_id='context_456'
+        )
         assert context.task_id == 'task_123'
         assert context.context_id == 'context_456'
 
@@ -44,7 +47,7 @@ class TestIDGeneratorContext:
     def test_context_validation(self):
         """Test that context raises validation error for invalid types."""
         with pytest.raises(ValidationError):
-            IDGeneratorContext(task_id={"not": "a string"})  # noqa
+            IDGeneratorContext(task_id={'not': 'a string'})  # noqa
 
 
 class TestIDGenerator:
@@ -130,7 +133,9 @@ class TestUUIDGenerator:
     def test_generate_with_populated_context(self):
         """Test that generate works with a populated context."""
         generator = UUIDGenerator()
-        context = IDGeneratorContext(task_id='task_123', context_id='context_456')
+        context = IDGeneratorContext(
+            task_id='task_123', context_id='context_456'
+        )
         result = generator.generate(context)
         assert isinstance(result, str)
         uuid.UUID(result)
