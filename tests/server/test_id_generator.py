@@ -103,7 +103,6 @@ class TestUUIDGenerator:
         result1 = generator.generate(context1)
         result2 = generator.generate(context2)
         
-        # Both should be valid UUIDs but different
         uuid.UUID(result1)
         uuid.UUID(result2)
         assert result1 != result2
