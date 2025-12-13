@@ -34,9 +34,11 @@ class TestIDGeneratorContext:
         assert context.task_id == "task_456"
 
     def test_context_validation(self):
-        """Test that context validates field types."""
-        context = IDGeneratorContext(task_id="valid_string")
-        assert isinstance(context.task_id, str)
+        """Test that context raises validation error for invalid types."""
+        from pydantic import ValidationError
+
+        with pytest.raises(ValidationError):
+            IDGeneratorContext(task_id={"not": "a string"})
 
 
 class TestIDGenerator:
