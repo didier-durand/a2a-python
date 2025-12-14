@@ -175,7 +175,6 @@ target-version = "py310" # Minimum Python version
 
 [tool.ruff.lint]
 ignore = [
-    "PLR0913", # Too many arguments in function definition
     "COM812", # Trailing comma missing.
     "FBT001", # Boolean positional arg in function definition
     "FBT002", # Boolean default value in function definition
