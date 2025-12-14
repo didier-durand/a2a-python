@@ -269,7 +269,7 @@ class TestGetAgentCard:
         mock_response,
         valid_agent_card_data,
     ):
-        """Test that empty string relative_card_path uses default path."""
+        """Test A2AClientJSONError is raised on agent card validation error."""
         return_json = {'invalid': 'data'}
         mock_response.json.return_value = return_json
         mock_httpx_client.get.return_value = mock_response
@@ -345,21 +345,21 @@ class TestGetAgentCard:
                 f'{base_url}/{AGENT_CARD_WELL_KNOWN_PATH[1:]}',
             )
 
+    @pytest.mark.parametrize('status_code', [400, 401, 403, 500, 502])
     @pytest.mark.asyncio
     async def test_get_agent_card_different_status_codes(
-        self, resolver, mock_httpx_client
+        self, resolver, mock_httpx_client, status_code
     ):
         """Test different HTTP status codes raise appropriate errors."""
-        for status_code in [400, 401, 403, 500, 502]:
-            mock_response = Mock(spec=httpx.Response)
-            mock_response.status_code = status_code
-            mock_response.raise_for_status.side_effect = httpx.HTTPStatusError(
-                f'Status {status_code}', request=Mock(), response=mock_response
-            )
-            mock_httpx_client.get.return_value = mock_response
-            with pytest.raises(A2AClientHTTPError) as exc_info:
-                await resolver.get_agent_card()
-            assert exc_info.value.status_code == status_code
+        mock_response = Mock(spec=httpx.Response)
+        mock_response.status_code = status_code
+        mock_response.raise_for_status.side_effect = httpx.HTTPStatusError(
+            f'Status {status_code}', request=Mock(), response=mock_response
+        )
+        mock_httpx_client.get.return_value = mock_response
+        with pytest.raises(A2AClientHTTPError) as exc_info:
+            await resolver.get_agent_card()
+        assert exc_info.value.status_code == status_code
 
     @pytest.mark.asyncio
     async def test_get_agent_card_returns_agent_card_instance(
