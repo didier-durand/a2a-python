@@ -288,8 +288,13 @@ class TestGetAgentCard:
         self,
         base_url,
         resolver,
+        mock_httpx_client,
+        mock_response,
+        valid_agent_card_data,
         caplog,
     ):
+        mock_response.json.return_value = valid_agent_card_data
+        mock_httpx_client.get.return_value = mock_response
         with (
             patch.object(
                 AgentCard, 'model_validate', return_value=Mock(spec=AgentCard)
