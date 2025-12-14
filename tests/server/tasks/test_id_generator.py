@@ -28,14 +28,20 @@ class TestIDGeneratorContext:
         assert context.task_id is None
         assert context.context_id is None
 
-    def test_context_creation_with_partial_fields(self):
+    @pytest.mark.parametrize(
+        'kwargs, expected_task_id, expected_context_id',
+        [
+            ({'task_id': 'task_123'}, 'task_123', None),
+            ({'context_id': 'context_456'}, None, 'context_456'),
+        ],
+    )
+    def test_context_creation_with_partial_fields(
+        self, kwargs, expected_task_id, expected_context_id
+    ):
         """Test creating context with only some fields populated."""
-        context = IDGeneratorContext(task_id='task_123')
-        assert context.task_id == 'task_123'
-        assert context.context_id is None
-        context = IDGeneratorContext(context_id='context_456')
-        assert context.task_id is None
-        assert context.context_id == 'context_456'
+        context = IDGeneratorContext(**kwargs)
+        assert context.task_id == expected_task_id
+        assert context.context_id == expected_context_id
 
     def test_context_mutability(self):
         """Test that context fields can be updated (Pydantic models are mutable by default)."""
