@@ -82,22 +82,30 @@ class TestIDGeneratorContext:
             assert generator.generate(IDGeneratorContext()) == 'test_id'
 
 
+@pytest.fixture
+def generator():
+    """Returns a UUIDGenerator instance."""
+    return UUIDGenerator()
+
+
+@pytest.fixture
+def context():
+    """Returns a IDGeneratorContext instance."""
+    return IDGeneratorContext()
+
+
 class TestUUIDGenerator:
     """Tests for UUIDGenerator implementation."""
 
-    def test_generate_returns_string(self):
+    def test_generate_returns_string(self, generator, context):
         """Test that generate returns a valid v4 UUID string."""
-        generator = UUIDGenerator()
-        context = IDGeneratorContext()
         result = generator.generate(context)
         assert isinstance(result, str)
         parsed_uuid = uuid.UUID(result)
         assert parsed_uuid.version == 4
 
-    def test_generate_produces_unique_ids(self):
+    def test_generate_produces_unique_ids(self, generator, context):
         """Test that multiple calls produce unique IDs."""
-        generator = UUIDGenerator()
-        context = IDGeneratorContext()
         ids = [generator.generate(context) for _ in range(100)]
         # All IDs should be unique
         assert len(ids) == len(set(ids))
@@ -118,4 +126,5 @@ class TestUUIDGenerator:
         generator = UUIDGenerator()
         result = generator.generate(context_arg)
         assert isinstance(result, str)
-        uuid.UUID(result)
+        parsed_uuid = uuid.UUID(result)
+        assert parsed_uuid.version == 4
