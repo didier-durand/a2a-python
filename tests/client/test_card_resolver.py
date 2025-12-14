@@ -284,7 +284,7 @@ class TestGetAgentCard:
         )
 
     @pytest.mark.asyncio
-    async def test_get_agent_card_logs_success( # noqa: PLR0913
+    async def test_get_agent_card_logs_success(  # noqa: PLR0913
         self,
         base_url,
         resolver,
