@@ -47,7 +47,18 @@ def valid_agent_card_data():
         'name': 'TestAgent',
         'description': 'A test agent',
         'version': '1.0.0',
-        # Add other required fields based on your AgentCard model
+        'url': 'https://example.com/a2a',
+        'capabilities': {},
+        'default_input_modes': ['text/plain'],
+        'default_output_modes': ['text/plain'],
+        'skills': [
+            {
+                'id': 'test-skill',
+                'name': 'Test Skill',
+                'description': 'A skill for testing',
+                'tags': ['test'],
+            }
+        ],
     }
 
 
@@ -73,6 +84,7 @@ class TestA2ACardResolverInit:
             agent_card_path=custom_path,
         )
         assert resolver.base_url == base_url
+        assert resolver.agent_card_path == custom_path[1:]
 
     def test_init_strips_leading_slash_from_agent_card_path(
         self, mock_httpx_client, base_url
