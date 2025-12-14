@@ -96,17 +96,20 @@ class TestUUIDGenerator:
         # All IDs should be unique
         assert len(ids) == len(set(ids))
 
-    def test_generate_with_none_context(self):
-        """Test that generate works with context set to None."""
+    @pytest.mark.parametrize(
+        'context_arg',
+        [
+            None,
+            IDGeneratorContext(),
+        ],
+        ids=[
+            'none_context',
+            'empty_context',
+        ],
+    )
+    def test_generate_works_with_various_contexts(self, context_arg):
+        """Test that generate works with various context inputs."""
         generator = UUIDGenerator()
-        result = generator.generate(None)
-        assert isinstance(result, str)
-        uuid.UUID(result)
-
-    def test_generate_with_empty_context(self):
-        """Test that generate works with an empty context."""
-        generator = UUIDGenerator()
-        context = IDGeneratorContext()
-        result = generator.generate(context)
+        result = generator.generate(context_arg)
         assert isinstance(result, str)
         uuid.UUID(result)
