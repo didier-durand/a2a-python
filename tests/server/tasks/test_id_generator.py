@@ -1,0 +1,112 @@
+import uuid
+
+import pytest
+
+from pydantic import ValidationError
+
+from a2a.server.id_generator import (
+    IDGenerator,
+    IDGeneratorContext,
+    UUIDGenerator,
+)
+
+
+class TestIDGeneratorContext:
+    """Tests for IDGeneratorContext."""
+
+    def test_context_creation_with_all_fields(self):
+        """Test creating context with all fields populated."""
+        context = IDGeneratorContext(
+            task_id='task_123', context_id='context_456'
+        )
+        assert context.task_id == 'task_123'
+        assert context.context_id == 'context_456'
+
+    def test_context_creation_with_defaults(self):
+        """Test creating context with default None values."""
+        context = IDGeneratorContext()
+        assert context.task_id is None
+        assert context.context_id is None
+
+    def test_context_creation_with_partial_fields(self):
+        """Test creating context with only some fields populated."""
+        context = IDGeneratorContext(task_id='task_123')
+        assert context.task_id == 'task_123'
+        assert context.context_id is None
+        context = IDGeneratorContext(context_id='context_456')
+        assert context.task_id is None
+        assert context.context_id == 'context_456'
+
+    def test_context_mutability(self):
+        """Test that context fields can be updated (Pydantic models are mutable by default)."""
+        context = IDGeneratorContext(task_id='task_123')
+        context.task_id = 'task_456'
+        assert context.task_id == 'task_456'
+
+    def test_context_validation(self):
+        """Test that context raises validation error for invalid types."""
+        with pytest.raises(ValidationError):
+            IDGeneratorContext(task_id={'not': 'a string'})
+
+    class TestIDGenerator:
+        """Tests for IDGenerator abstract base class."""
+
+        def test_cannot_instantiate_abstract_class(self):
+            """Test that IDGenerator cannot be instantiated directly."""
+            with pytest.raises(TypeError):
+                IDGenerator()
+
+        def test_subclass_must_implement_generate(self):
+            """Test that subclasses must implement the generate method."""
+
+            class IncompleteGenerator(IDGenerator):
+                pass
+
+            with pytest.raises(TypeError):
+                IncompleteGenerator()
+
+        def test_valid_subclass_implementation(self):
+            """Test that a valid subclass can be instantiated."""
+
+            class ValidGenerator(IDGenerator):  # pylint: disable=C0115,R0903
+                def generate(self, context: IDGeneratorContext) -> str:
+                    return 'test_id'
+
+            generator = ValidGenerator()
+            assert generator.generate(IDGeneratorContext()) == 'test_id'
+
+
+class TestUUIDGenerator:
+    """Tests for UUIDGenerator implementation."""
+
+    def test_generate_returns_string(self):
+        """Test that generate returns a valid v4 UUID string."""
+        generator = UUIDGenerator()
+        context = IDGeneratorContext()
+        result = generator.generate(context)
+        assert isinstance(result, str)
+        parsed_uuid = uuid.UUID(result)
+        assert parsed_uuid.version == 4
+
+    def test_generate_produces_unique_ids(self):
+        """Test that multiple calls produce unique IDs."""
+        generator = UUIDGenerator()
+        context = IDGeneratorContext()
+        ids = [generator.generate(context) for _ in range(100)]
+        # All IDs should be unique
+        assert len(ids) == len(set(ids))
+
+    def test_generate_with_none_context(self):
+        """Test that generate works with context set to None."""
+        generator = UUIDGenerator()
+        result = generator.generate(None)
+        assert isinstance(result, str)
+        uuid.UUID(result)
+
+    def test_generate_with_empty_context(self):
+        """Test that generate works with an empty context."""
+        generator = UUIDGenerator()
+        context = IDGeneratorContext()
+        result = generator.generate(context)
+        assert isinstance(result, str)
+        uuid.UUID(result)
