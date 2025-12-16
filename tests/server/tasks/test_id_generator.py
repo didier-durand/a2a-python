@@ -54,32 +54,33 @@ class TestIDGeneratorContext:
         with pytest.raises(ValidationError):
             IDGeneratorContext(task_id={'not': 'a string'})
 
-    class TestIDGenerator:
-        """Tests for IDGenerator abstract base class."""
 
-        def test_cannot_instantiate_abstract_class(self):
-            """Test that IDGenerator cannot be instantiated directly."""
-            with pytest.raises(TypeError):
-                IDGenerator()
+class TestIDGenerator:
+    """Tests for IDGenerator abstract base class."""
 
-        def test_subclass_must_implement_generate(self):
-            """Test that subclasses must implement the generate method."""
+    def test_cannot_instantiate_abstract_class(self):
+        """Test that IDGenerator cannot be instantiated directly."""
+        with pytest.raises(TypeError):
+            IDGenerator()
 
-            class IncompleteGenerator(IDGenerator):
-                pass
+    def test_subclass_must_implement_generate(self):
+        """Test that subclasses must implement the generate method."""
 
-            with pytest.raises(TypeError):
-                IncompleteGenerator()
+        class IncompleteGenerator(IDGenerator):
+            pass
 
-        def test_valid_subclass_implementation(self):
-            """Test that a valid subclass can be instantiated."""
+        with pytest.raises(TypeError):
+            IncompleteGenerator()
 
-            class ValidGenerator(IDGenerator):  # pylint: disable=C0115,R0903
-                def generate(self, context: IDGeneratorContext) -> str:
-                    return 'test_id'
+    def test_valid_subclass_implementation(self):
+        """Test that a valid subclass can be instantiated."""
 
-            generator = ValidGenerator()
-            assert generator.generate(IDGeneratorContext()) == 'test_id'
+        class ValidGenerator(IDGenerator):  # pylint: disable=C0115,R0903
+            def generate(self, context: IDGeneratorContext) -> str:
+                return 'test_id'
+
+        generator = ValidGenerator()
+        assert generator.generate(IDGeneratorContext()) == 'test_id'
 
 
 @pytest.fixture
