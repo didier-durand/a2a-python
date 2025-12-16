@@ -7,12 +7,12 @@ from a2a.auth.user import UnauthenticatedUser, User
 
 class TestUser(unittest.TestCase):
     def test_is_abstract(self):
-        assert isabstract(User)
+        self.assertTrue(isabstract(User))
 
 
 class TestUnauthenticatedUser(unittest.TestCase):
     def test_is_user_subclass(self):
-        assert issubclass(UnauthenticatedUser, User)
+        self.assertTrue(issubclass(UnauthenticatedUser, User))
 
     def test_is_authenticated_returns_false(self):
         user = UnauthenticatedUser()
