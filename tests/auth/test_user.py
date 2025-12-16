@@ -1,14 +1,16 @@
 import unittest
+
 from inspect import isabstract
 
 from a2a.auth.user import UnauthenticatedUser, User
+
 
 class TestUser(unittest.TestCase):
     def test_is_abstract(self):
         assert isabstract(User)
 
-class TestUnauthenticatedUser(unittest.TestCase):
 
+class TestUnauthenticatedUser(unittest.TestCase):
     def test_is_user_subclass(self):
         assert issubclass(UnauthenticatedUser, User)
 
